@@ -150,37 +150,44 @@ const addDepartment = ()=>{
 
 const addRole = ()=>{
   console.log("Add Role");
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "title",
-      message: "Enter Title of the new role: ",
-    },
-    {
-      type: "input",
-      name: "salary",
-      message: "Enter the salary: ",
-    },
-    {
-      type: "input",
-      name: "deptName",
-      message: "What department is the role associated with? ",
-    }
-  ])
-  .then(function (userInput) {
-    let idquery= "SELECT id FROM department WHERE department_name='"+userInput.deptName+"'";
-    db.query(idquery, function (err, res,fields) {
-      if (err) throw err;
-      console.log(res);
-      const id = res[0].id;
-      let query = "INSERT INTO role(title, salary, department_id) VALUES('"+userInput.title+"', "+userInput.salary+","+id+")";
-    db.query(query, function (err, res) {
-      if (err) throw err;
-      console.log("Role added successfully to the database");
-      viewRoles();
-    });
-    });
-  
+  let deptSelectQuery = "SELECT department_name FROM department";
+  let deptArray = [];
+  db.query(deptSelectQuery, function (err, res) {
+    if (err) throw err;
+    res.forEach((dept) => deptArray.push(dept.department_name));
+    
+    inquirer.prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "Enter Title of the new role: ",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "Enter the salary: ",
+      },
+      {
+        type: "list",
+        name: "deptName",
+        message: "What department is the role associated with? ",
+        choices: deptArray,
+      }
+    ])
+    .then(function (userInput) {
+      let idquery= "SELECT id FROM department WHERE department_name='"+userInput.deptName+"'";
+      db.query(idquery, function (err, res,fields) {
+        if (err) throw err;
+        console.log(res);
+        const id = res[0].id;
+        let query = "INSERT INTO role(title, salary, department_id) VALUES('"+userInput.title+"', "+userInput.salary+","+id+")";
+        db.query(query, function (err, res) {
+          if (err) throw err;
+          console.log("Role added successfully to the database");
+          viewRoles();
+        });
+      });
+  });
 });
 }
 
