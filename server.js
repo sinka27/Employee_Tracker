@@ -135,14 +135,14 @@ const addDepartment = ()=>{
     {
       type: "input",
       name: "deptname",
-      message: "Enter Department name",
+      message: "Enter Department name: ",
     },
   ])
   .then(function (userInput) {
   let query = "INSERT INTO department(department_name) VALUES('"+userInput.deptname+"')";
     db.query(query, function (err, res) {
       if (err) throw err;
-      console.log("Department added successfully");
+      console.log(userInput.deptname+" department added successfully to the database");
       viewDepartments();
     });
 });
@@ -154,26 +154,33 @@ const addRole = ()=>{
     {
       type: "input",
       name: "title",
-      message: "Enter Title of the new role",
+      message: "Enter Title of the new role: ",
     },
     {
       type: "input",
       name: "salary",
-      message: "Enter salary",
+      message: "Enter the salary: ",
     },
     {
       type: "input",
-      name: "deptId",
-      message: "Enter department id",
+      name: "deptName",
+      message: "What department is the role associated with? ",
     }
   ])
   .then(function (userInput) {
-  let query = "INSERT INTO role(title, salary, department_id) VALUES('"+userInput.title+"', "+userInput.salary+","+userInput.deptId+")";
+    let idquery= "SELECT id FROM department WHERE department_name='"+userInput.deptName+"'";
+    db.query(idquery, function (err, res,fields) {
+      if (err) throw err;
+      console.log(res);
+      const id = res[0].id;
+      let query = "INSERT INTO role(title, salary, department_id) VALUES('"+userInput.title+"', "+userInput.salary+","+id+")";
     db.query(query, function (err, res) {
       if (err) throw err;
-      console.log("Role added successfully");
+      console.log("Role added successfully to the database");
       viewRoles();
     });
+    });
+  
 });
 }
 
@@ -183,30 +190,47 @@ const addEmployee = ()=>{
     {
       type: "input",
       name: "firstName",
-      message: "Enter the first name of the employee",
+      message: "Enter the first name of the employee: ",
     },
     {
       type: "input",
       name: "lastName",
-      message: "Enter the last name of the employee",
+      message: "Enter the last name of the employee: ",
     },
     {
       type: "input",
-      name: "roleId",
-      message: "Enter the role id",
+      name: "roleName",
+      message: "What is employee's role? ",
     },
     {
       type: "input",
-      name: "managerId",
-      message: "Enter the manager id",
+      name: "managerName",
+      message: "Who is employee's manager? ",
     }
   ])
   .then(function (userInput) {
-  let query = "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('"+userInput.firstName+"', '"+userInput.lastName+"',"+userInput.roleId+","+userInput.managerId+")";
+    let rolequery= "SELECT id FROM role WHERE title='"+userInput.roleName+"'";
+    db.query(rolequery, function (err, res,fields) {
+      if (err) throw err;
+      console.log(res);
+      const roleid = res[0].id;
+      
+      let managerFN = userInput.managerName.split(" ")[0];
+      let managerLN = userInput.managerName.split(" ")[1];
+
+      let managerquery= "SELECT id FROM employee WHERE first_name='"+managerFN+"' AND last_name='"+managerLN+"'";
+      db.query(managerquery, function (err, res,fields) {
+      if (err) throw err;
+      console.log(res);
+      const managerid = res[0].id;
+
+    let query = "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('"+userInput.firstName+"', '"+userInput.lastName+"',"+roleid+","+managerid+")";
     db.query(query, function (err, res) {
       if (err) throw err;
-      console.log("Employee added successfully");
+      console.log("New Employee added successfully to the databse");
       viewEmployees();
     });
+  });
+});
 });
 }
