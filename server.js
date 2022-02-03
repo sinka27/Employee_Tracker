@@ -186,51 +186,119 @@ const addRole = ()=>{
 
 const addEmployee = ()=>{
   console.log("Add Employee");
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "firstName",
-      message: "Enter the first name of the employee: ",
-    },
-    {
-      type: "input",
-      name: "lastName",
-      message: "Enter the last name of the employee: ",
-    },
-    {
-      type: "input",
-      name: "roleName",
-      message: "What is employee's role? ",
-    },
-    {
-      type: "input",
-      name: "managerName",
-      message: "Who is employee's manager? ",
-    }
-  ])
-  .then(function (userInput) {
-    let rolequery= "SELECT id FROM role WHERE title='"+userInput.roleName+"'";
-    db.query(rolequery, function (err, res,fields) {
+  let roleQuery = "SELECT title FROM role";
+  let roleArray = [];
+  let employeeArray = [];
+  db.query(roleQuery, function (err, res) {
+    if (err) throw err;
+    res.forEach((role) => roleArray.push(role.title));
+    let empQuery = "SELECT first_name, last_name FROM employee";
+    db.query(empQuery, function (err, res) {
       if (err) throw err;
-      console.log(res);
-      const roleid = res[0].id;
+      res.forEach((employee) => employeeArray.push(employee.first_name+" "+employee.last_name));
       
-      let managerFN = userInput.managerName.split(" ")[0];
-      let managerLN = userInput.managerName.split(" ")[1];
-
-      let managerquery= "SELECT id FROM employee WHERE first_name='"+managerFN+"' AND last_name='"+managerLN+"'";
-      db.query(managerquery, function (err, res,fields) {
-      if (err) throw err;
-      console.log(res);
-      const managerid = res[0].id;
-
-    let query = "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('"+userInput.firstName+"', '"+userInput.lastName+"',"+roleid+","+managerid+")";
-    db.query(query, function (err, res) {
-      if (err) throw err;
-      console.log("New Employee added successfully to the databse");
-      viewEmployees();
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "firstName",
+          message: "Enter the first name of the employee: ",
+        },
+        {
+          type: "input",
+          name: "lastName",
+          message: "Enter the last name of the employee: ",
+        },
+        {
+          type: "list",
+          name: "roleName",
+          message: "What is employee's role? ",
+          choices: roleArray,
+        },
+        {
+          type: "list",
+          name: "managerName",
+          message: "Who is employee's manager? ",
+          choices: employeeArray
+        }
+      ])
+      .then(function (userInput) {
+        let rolequery= "SELECT id FROM role WHERE title='"+userInput.roleName+"'";
+        db.query(rolequery, function (err, res,fields) {
+          if (err) throw err;
+          console.log(res);
+          const roleid = res[0].id;
+          
+          let managerFN = userInput.managerName.split(" ")[0];
+          let managerLN = userInput.managerName.split(" ")[1];
+    
+          let managerquery= "SELECT id FROM employee WHERE first_name='"+managerFN+"' AND last_name='"+managerLN+"'";
+          db.query(managerquery, function (err, res,fields) {
+          if (err) throw err;
+          console.log(res);
+          const managerid = res[0].id;
+    
+          let query = "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('"+userInput.firstName+"', '"+userInput.lastName+"',"+roleid+","+managerid+")";
+          db.query(query, function (err, res) {
+            if (err) throw err;
+            console.log("New Employee added successfully to the databse");
+            viewEmployees();
+          });
+        });
+      });
     });
   });
 });
-});
+}
+
+const updateEmployeeRole = ()=>{
+let employeeQuery = "SELECT first_name,last_name FROM employee";
+let employeeArray=[];
+db.query(employeeQuery,function(err,res,fields){
+  if (err) throw err;
+  console.table(res);
+  res.forEach((employee) => employeeArray.push(employee.first_name+" "+employee.last_name));
+  console.table(employeeArray);
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "name",
+      message: "Which employee's role do you want to update?",
+      choices: employeeArray,
+    },
+  ])
+  .then(function (employeeName) {
+    let empFN = employeeName.name.split(" ")[0];
+    let empLN = employeeName.name.split(" ")[1]; 
+    
+    let roleQuery = "SELECT title FROM role";
+    let roleArray = [];
+    db.query(roleQuery, function (err, res) {
+      if (err) throw err;
+      res.forEach((role) => roleArray.push(role.title));
+      inquirer.prompt([
+        {
+          type: "list",
+          name: "role",
+          message: "Select the Role to update the employee with?",
+          choices: roleArray,
+        },
+      ])
+      .then(function (roleName) {
+        let role = roleName.role;
+        let selectRoleIdQuery = "SELECT id FROM role WHERE title = '"+role+"'";
+        db.query(selectRoleIdQuery, function (err, res) {
+          if (err) throw err;
+          let roleId = res[0].id;
+          let updateQuery = "UPDATE employee SET role_id="+roleId+" WHERE first_name='"+empFN+"' AND last_name='"+empLN+"'";
+          db.query(updateQuery, function (err, res) {
+            if (err) throw err;
+            console.log("Employee Updated Succesfully");     
+            initialQuestion();       
+          });
+        });
+      });
+    });
+  });
+})
+  
 }
