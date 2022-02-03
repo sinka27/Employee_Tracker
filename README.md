@@ -42,11 +42,22 @@ When the user runs the application in Terminal:
 
 Since this application is run through the terminal, there is no website to view. To see how this application works, please follow the link below to view a walkthrough video.
 
-<a href="" target="_blank">Click here to watch the video!</a>
+<a href="https://drive.google.com/file/d/1PLdfXlPmjINPjTtGY6T1gEvwFHdQHQs2/view?usp=sharing" target="_blank">Click here to watch the video!</a>
 
 ## Gif
 
+![](./assets/emptrack.gif)
+
+
 ## Screenshots
+
+![](./assets/Initial.png)
+
+![](./assets/screenshot2.png)
+
+![](./assets/screenshot3.png)
+
+![](./assets/screenshot4.png)
 
 ## Credits
 
