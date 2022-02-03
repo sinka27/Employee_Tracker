@@ -177,4 +177,36 @@ const addRole = ()=>{
 });
 }
 
+const addEmployee = ()=>{
+  console.log("Add Employee");
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "firstName",
+      message: "Enter the first name of the employee",
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "Enter the last name of the employee",
+    },
+    {
+      type: "input",
+      name: "roleId",
+      message: "Enter the role id",
+    },
+    {
+      type: "input",
+      name: "managerId",
+      message: "Enter the manager id",
+    }
+  ])
+  .then(function (userInput) {
+  let query = "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('"+userInput.firstName+"', '"+userInput.lastName+"',"+userInput.roleId+","+userInput.managerId+")";
+    db.query(query, function (err, res) {
+      if (err) throw err;
+      console.log("Employee added successfully");
+      viewEmployees();
+    });
+});
 }
