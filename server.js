@@ -99,6 +99,7 @@ const viewDepartments = () => {
       if (err) throw err;
       let departmentArray = [];
       res.forEach((department) => departmentArray.push(department));
+      console.table(departmentArray);
       initialQuestion();
     });
 };
@@ -109,6 +110,7 @@ const viewRoles = () => {
       if (err) throw err;
       let roleArray = [];
       res.forEach((role) => roleArray.push(role));
+      console.table(roleArray);
       initialQuestion();
     });
 };
@@ -119,6 +121,7 @@ const viewEmployees = ()=>{
       if (err) throw err;
       let employeeArray = [];
       res.forEach((employee) => employeeArray.push(employee));
+      console.table(employeeArray);
       initialQuestion();
     });
 }
