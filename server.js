@@ -57,12 +57,15 @@ const initialQuestion  = () => {
   .then(function (userInput) {
     switch (userInput.action) {
       case "View all Departments":
+        console.table("\n----------- DEPARTMENTS -----------\n");
         viewDepartments();
         break;
       case "View all Roles":
+        console.table("\n----------- ROLES -----------\n");
         viewRoles();
         break;
       case "View all Employees":
+        console.table("\n----------- EMPLOYEES -----------\n");
         viewEmployees();
         break;
       case "Add Department":
@@ -79,6 +82,9 @@ const initialQuestion  = () => {
         break;
       case "Exit":
         db.end();
+        console.table(
+          "\n------------ BYE! ------------\n"
+      )
         break;
       default:
         break;
@@ -94,7 +100,6 @@ const viewDepartments = () => {
       if (err) throw err;
       let departmentArray = [];
       res.forEach((department) => departmentArray.push(department));
-      console.log(departmentArray);
       console.table(departmentArray);
       initialQuestion();
     });
@@ -122,4 +127,25 @@ const viewEmployees = ()=>{
       console.table(employeeArray);
       initialQuestion();
     });
+}
+
+const addDepartment = ()=>{
+  console.log("Add Department");
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "deptname",
+      message: "Enter Department name",
+    },
+  ])
+  .then(function (userInput) {
+  let query = "INSERT INTO department(department_name) VALUES('"+userInput.deptname+"')";
+    db.query(query, function (err, res) {
+      if (err) throw err;
+      console.log("Department added successfully");
+      viewDepartments();
+    });
+});
+}
+
 }
