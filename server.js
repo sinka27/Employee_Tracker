@@ -94,43 +94,36 @@ const initialQuestion  = () => {
 
 
 const viewDepartments = () => {
-  console.log("Department View");
     let query = "SELECT * FROM department;";
     db.query(query, function (err, res) {
       if (err) throw err;
       let departmentArray = [];
       res.forEach((department) => departmentArray.push(department));
-      console.table(departmentArray);
       initialQuestion();
     });
 };
 
 const viewRoles = () => {
-  console.log("Roles View");
     let query = "SELECT * FROM role;";
     db.query(query, function (err, res) {
       if (err) throw err;
       let roleArray = [];
       res.forEach((role) => roleArray.push(role));
-      console.table(roleArray);
       initialQuestion();
     });
 };
 
 const viewEmployees = ()=>{
-  console.log("Employees View");
   let query = "SELECT * FROM employee;";
     db.query(query, function (err, res) {
       if (err) throw err;
       let employeeArray = [];
       res.forEach((employee) => employeeArray.push(employee));
-      console.table(employeeArray);
       initialQuestion();
     });
 }
 
 const addDepartment = ()=>{
-  console.log("Add Department");
   inquirer.prompt([
     {
       type: "input",
@@ -149,7 +142,6 @@ const addDepartment = ()=>{
 }
 
 const addRole = ()=>{
-  console.log("Add Role");
   let deptSelectQuery = "SELECT department_name FROM department";
   let deptArray = [];
   db.query(deptSelectQuery, function (err, res) {
@@ -178,7 +170,6 @@ const addRole = ()=>{
       let idquery= "SELECT id FROM department WHERE department_name='"+userInput.deptName+"'";
       db.query(idquery, function (err, res,fields) {
         if (err) throw err;
-        console.log(res);
         const id = res[0].id;
         let query = "INSERT INTO role(title, salary, department_id) VALUES('"+userInput.title+"', "+userInput.salary+","+id+")";
         db.query(query, function (err, res) {
@@ -192,7 +183,6 @@ const addRole = ()=>{
 }
 
 const addEmployee = ()=>{
-  console.log("Add Employee");
   let roleQuery = "SELECT title FROM role";
   let roleArray = [];
   let employeeArray = [];
@@ -232,7 +222,7 @@ const addEmployee = ()=>{
         let rolequery= "SELECT id FROM role WHERE title='"+userInput.roleName+"'";
         db.query(rolequery, function (err, res,fields) {
           if (err) throw err;
-          console.log(res);
+        
           const roleid = res[0].id;
           
           let managerFN = userInput.managerName.split(" ")[0];
@@ -241,7 +231,7 @@ const addEmployee = ()=>{
           let managerquery= "SELECT id FROM employee WHERE first_name='"+managerFN+"' AND last_name='"+managerLN+"'";
           db.query(managerquery, function (err, res,fields) {
           if (err) throw err;
-          console.log(res);
+          
           const managerid = res[0].id;
     
           let query = "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('"+userInput.firstName+"', '"+userInput.lastName+"',"+roleid+","+managerid+")";
@@ -262,9 +252,7 @@ let employeeQuery = "SELECT first_name,last_name FROM employee";
 let employeeArray=[];
 db.query(employeeQuery,function(err,res,fields){
   if (err) throw err;
-  console.table(res);
   res.forEach((employee) => employeeArray.push(employee.first_name+" "+employee.last_name));
-  console.table(employeeArray);
   inquirer.prompt([
     {
       type: "list",
