@@ -85,3 +85,41 @@ const initialQuestion  = () => {
     }
       });
     }
+
+
+const viewDepartments = () => {
+  console.log("Department View");
+    let query = "SELECT * FROM department;";
+    db.query(query, function (err, res) {
+      if (err) throw err;
+      let departmentArray = [];
+      res.forEach((department) => departmentArray.push(department));
+      console.log(departmentArray);
+      console.table(departmentArray);
+      initialQuestion();
+    });
+};
+
+const viewRoles = () => {
+  console.log("Roles View");
+    let query = "SELECT * FROM role;";
+    db.query(query, function (err, res) {
+      if (err) throw err;
+      let roleArray = [];
+      res.forEach((role) => roleArray.push(role));
+      console.table(roleArray);
+      initialQuestion();
+    });
+};
+
+const viewEmployees = ()=>{
+  console.log("Employees View");
+  let query = "SELECT * FROM employee;";
+    db.query(query, function (err, res) {
+      if (err) throw err;
+      let employeeArray = [];
+      res.forEach((employee) => employeeArray.push(employee));
+      console.table(employeeArray);
+      initialQuestion();
+    });
+}
